@@ -5,8 +5,7 @@ import datetime
 import toml
 
 # Load credentials from the TOML file
-config = toml.load("Snowflake-TOML.txt")
-pars = config["connection"]
+pars = st.secrets["connection"]
 
 tab1, tab2 = st.tabs(["Employee Data", "Employee Charts"])
 
