@@ -48,7 +48,7 @@ uploaded_file = st.file_uploader("Upload a CSV file", type="csv")
 if uploaded_file is not None:
     df = pd.read_csv(uploaded_file).convert_dtypes()
 else:
-    df = pd.read_csv(r"C:\Users\aleco\Desktop\employees.csv", header=0).convert_dtypes()
+    df = pd.read_csv("employees.csv", header=0).convert_dtypes()
 
 st.subheader("CSV Data")
 st.dataframe(df)
