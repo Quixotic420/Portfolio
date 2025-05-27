@@ -45,34 +45,32 @@ st.title("Hierarchical Data Charts")
 
 uploaded_file = st.file_uploader("Upload a CSV file", type="csv")
 
-if uploaded_file is not None:
-    df = pd.read_csv(uploaded_file).convert_dtypes()
-else:
-    df = pd.read_csv("employees.csv", header=0).convert_dtypes()
+try:
+    if uploaded_file is not None:
+        df = pd.read_csv(uploaded_file).convert_dtypes()
+    else:
+        df = pd.read_csv("employees.csv", header=0).convert_dtypes()
+    st.subheader("CSV Data")
+    st.dataframe(df)
 
-st.subheader("CSV Data")
-st.dataframe(df)
+    labels, parents = df[df.columns[0]], df[df.columns[1]]
 
-labels, parents = df[df.columns[0]], df[df.columns[1]]
+    t1, t2, t3, t4 = st.tabs(["Treemap", "Icicle", "Sunbirst", "Sankey"])
 
-t1, t2, t3, t4 = st.tabs(["Treemap", "Icicle", "Sunbirst", "Sankey"])
+    with t1:
+        fig = makeTreemap(labels, parents)
+        st.plotly_chart(fig, use_container_width=True)
 
-with t1:
-    st.title("Snowflake Streamlit App")
-    st.header("Snowflake Employee Data")
+    with t2:
+        fig = makeIcicle(labels, parents)
+        st.plotly_chart(fig, use_container_width=True)
 
+    with t3:
+        fig = makeSunburst(labels, parents)
+        st.plotly_chart(fig, use_container_width=True)
 
-
-    fig = makeTreemap(labels, parents)
-    st.plotly_chart(fig, use_container_width=True)
-
-fig = makeIcicle(labels, parents)
-t2.plotly_chart(fig, use_container_width=True)
-
-with t3:
-    fig = makeSunburst(labels, parents)
-    st.plotly_chart(fig, use_container_width=True)
-
-with t4:
-    fig = makeSankey(labels, parents)
-    st.plotly_chart(fig, use_container_width=True)
+    with t4:
+        fig = makeSankey(labels, parents)
+        st.plotly_chart(fig, use_container_width=True)
+except FileNotFoundError:
+    st.warning("employees.csv not found. Please upload a CSV file to view data and charts.")
