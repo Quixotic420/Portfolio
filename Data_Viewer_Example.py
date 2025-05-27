@@ -1,6 +1,7 @@
 import pandas as pd
 import streamlit as st
 import plotly.graph_objects as go
+import os
 
 def makeTreemap(labels, parents):
     data = go.Treemap(
@@ -45,11 +46,15 @@ st.title("Hierarchical Data Charts")
 
 uploaded_file = st.file_uploader("Upload a CSV file", type="csv")
 
-try:
-    if uploaded_file is not None:
-        df = pd.read_csv(uploaded_file).convert_dtypes()
-    else:
-        df = pd.read_csv("employees.csv", header=0).convert_dtypes()
+if uploaded_file is not None:
+    df = pd.read_csv(uploaded_file).convert_dtypes()
+elif os.path.exists("employees.csv"):
+    df = pd.read_csv("employees.csv", header=0).convert_dtypes()
+else:
+    st.warning("No CSV file found. Please upload a CSV file to view data and charts.")
+    df = pd.DataFrame()  # Empty DataFrame
+
+if not df.empty:
     st.subheader("CSV Data")
     st.dataframe(df)
 
@@ -72,5 +77,3 @@ try:
     with t4:
         fig = makeSankey(labels, parents)
         st.plotly_chart(fig, use_container_width=True)
-except FileNotFoundError:
-    st.warning("employees.csv not found. Please upload a CSV file to view data and charts.")
